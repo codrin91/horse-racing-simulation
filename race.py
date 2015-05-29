@@ -41,10 +41,10 @@ def race(horses, track_length=80):
             horse = horses[i]
             progress[i] += horse.move()
             print(' |' + 80 * '-' + '|')
-            print(' |' + progress[i] * '*' + horse.name)
+            print(' |' + (progress[i] - 1) * '*' + horse.name)
         print(' |' + 80 * '-' + '|')
         print(' |' + 80 * '%')
-        time.sleep(.2)
+        time.sleep(1)
     
     # Identify winner; flip coin if a tie
     
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     a = Horse('A', [4,5,6])
     b = Horse('B', [5,5,5])
     c = Horse('C', [3,5,7])
-    d = Horse('D', [5,5,5])
+    d = Horse('D', [4,5,6])
     e = Horse('E', [4,4,4,4,4,4,4,4,4,12])
     horses = [a,b,c,d,e]
     
