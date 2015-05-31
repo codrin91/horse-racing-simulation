@@ -30,21 +30,22 @@ class Horse():
             
         self.odds = '1:' + str(int(self.odds))
 
-def race(horses, track_length=80):
+def race(horses, track_length=70, fast=False):
     progress = [0 for i in range(len(horses))]
     
     while max(progress) <= track_length:
         os.system('clear')
         print('\n')
-        print(' |' + 80 * '%')
+        print(' |' + 70 * '%')
         for i in range(len(horses)):
             horse = horses[i]
             progress[i] += horse.move()
-            print(' |' + 80 * '-' + '|')
+            print(' |' + 70 * '-' + '|')
             print(' |' + (progress[i] - 1) * '*' + horse.name)
-        print(' |' + 80 * '-' + '|')
-        print(' |' + 80 * '%')
-        time.sleep(1)
+        print(' |' + 70 * '-' + '|')
+        print(' |' + 70 * '%')
+        if not fast:
+            time.sleep(1)
     
     # Identify winner; flip coin if a tie
     
@@ -83,19 +84,20 @@ def summary(horses):
 
 if __name__ == '__main__':
     
-    a = Horse('A', [4,5,6])
-    b = Horse('B', [5,5,5])
-    c = Horse('C', [3,5,7])
-    d = Horse('D', [4,5,6])
-    e = Horse('E', [4,4,4,4,4,4,4,4,4,12])
+    b = Horse('B', [4,4,5,6,6])
+    c = Horse('C', [5,5,5])
+    d = Horse('D', [3,5,5,7])
+    e = Horse('E', [4,5,6])
+    a = Horse('A', [3,3,3,4,4,4,4,4,12])
     horses = [a,b,c,d,e]
     
     while True:
+        #for i in range(1000):
         print('\n')
-        print(80 * '%')
-        race(horses)
+        print(70 * '%')
+        race(horses, fast=False)
         print('\n')
         summary(horses)
-        print(80 * '+')
+        print(70 * '+')
         print('\n')
         raw_input('Press any key to race again!')
