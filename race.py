@@ -1,3 +1,5 @@
+#! /usr/bin/python
+
 import math, os, random, sys, time
 import pygame
 from pygame.locals import *
@@ -22,6 +24,10 @@ GREY = pygame.Color('#3C3C3C')
 
 # Font settings
 FONT = pygame.font.SysFont('joystix', 36)
+
+# Delay between screen updates
+PACE = 0.25
+
 
 
 class Horse():
@@ -70,9 +76,12 @@ class Horse():
         '''
         shape = Rect(self.x, self.y, 20, 20)
         pygame.draw.rect(surface, self.color, shape)
+        
+        # Draw label
+        label = FONT.render(self.name, True, self.color)
+        surface.blit(label, (10, self.y - 15))
 
-
-def race(surface, lanes, horses):
+def race(surface, lanes, horses, pace=0.75):
     '''
     Simulate a single race.
     Input: a list of Horses
@@ -90,14 +99,13 @@ def race(surface, lanes, horses):
             horse.move()
             horse.draw(surface)
         
-        # Refresh the display and pause for dramatic effect
         pygame.display.flip()
-        time.sleep(0.25) 
+        time.sleep(pace)
     
-    # Identify winner; flip coin if a tie
+    winning_distance = max([horse.x for horse in horses])
+    
     winners = []
-    winning_distance = max([horse.x for horse in horses]) 
-    
+        
     for horse in horses:
         if horse.x == winning_distance:
             winners.append(horse)
@@ -114,25 +122,24 @@ def race(surface, lanes, horses):
         else:
             horse.add_result(won=False)
     
-    # Create and return string about winner
-    winning_string = 'Horse ' + winner.name + ' won'
-    if len(winners) > 1:
-        winning_string += ' (by a photo finish!)'
-    else:
-        winning_string += '!'
+    # Display string about winner
+    winning_string = 'Horse ' + winner.name + ' won!'
+    winner_display = FONT.render(winning_string, True, WHITE)
+    surface.blit(winner_display, (200, 300))
     
-    return winning_string
-
+    if len(winners) > 1:
+        photofinish = FONT.render('(by a photo finish!)', True, WHITE)
+        surface.blit(winner_display, (200, 340))
+        
 def summary(surface, horses):
     '''
     Display the number of wins for each horse and its updated odds.
     '''
-    font = pygame.font.Font('freesansbold.ttf', 28)
     
     x = 75
     
     for horse in horses:
-        y = 450
+        y = 425
         name = FONT.render(horse.name, True, horse.color)
         surface.blit(name, (x, y))
         
@@ -171,32 +178,30 @@ if __name__ == '__main__':
    
     
     # Create the horses
-    a = Horse('A', [15, 20, 27], TRACK_START, lanes[0] + 10, RED)
-    b = Horse('B', [10, 20, 34], TRACK_START, lanes[1] + 10, BLUE)
-    c = Horse('C', [22, 22, 22], TRACK_START, lanes[2] + 10, YELLOW)
-    d = Horse('D', [15, 15, 15, 27, 27], TRACK_START, lanes[3] + 10, GREEN)
-    e = Horse('E', [18, 18, 24, 24, 24], TRACK_START, lanes[4] + 10, ORANGE)
+    a = Horse('A', [21, 21, 21, 21, 22, 22, 23], TRACK_START, lanes[0] + 10, YELLOW)
+    b = Horse('B', [17, 17, 20, 26, 26], TRACK_START, lanes[1] + 10, GREEN)
+    c = Horse('C', [18, 18, 22, 24, 24], TRACK_START, lanes[2] + 10, ORANGE)
+    d = Horse('D', [17, 20, 27], TRACK_START, lanes[3] + 10, BLUE)
+    e = Horse('E', [14, 20, 28], TRACK_START, lanes[4] + 10, RED)
     
     horses = [a,b,c,d,e]
     
     for horse in horses:
-        horse.draw(surface)
+        horse.x = TRACK_START
     
     pygame.display.flip()
     
     keep_racing = True
-    
     while keep_racing:
+        
         # Reset horse positions
         for horse in horses:
             horse.x = TRACK_START
         
         # Run the race
-        winner_string = race(surface, lanes, horses) 
+        winner_string = race(surface, lanes, horses, PACE)
         
         # Display winner and summaries
-        winner_display = FONT.render(winner_string, True, WHITE)
-        surface.blit(winner_display, (250, 325))
         pygame.display.flip()
         
         summary(surface, horses)
@@ -210,3 +215,4 @@ if __name__ == '__main__':
                 sys.exit()
             elif event.type == KEYDOWN:
                 break
+    
